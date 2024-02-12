@@ -1,0 +1,88 @@
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-md-2">
+            <ul *ngIf="cities" class="list-group">
+                <li *ngFor="let city of cities.content" class="list-group-item clickable" (click)="onGetCinema(city)"
+                    [ngClass]="currentCity == city ? 'active' :''">
+                    {{city.name}}
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header">
+                    List Of Cinemas
+                </div>
+                <div class="card-body">
+                    <ul *ngIf="cinemas" class="nav nav-pills">
+                        <li *ngFor="let cinema of cinemas" class="nav-link  m-1 clickable"
+                            (click)="onGetTheaters(cinema)" [ngClass]="currentCinema == cinema ? 'active' :''">
+                            {{cinema.name}}
+                        </li>
+                    </ul>
+                    <div class="row" *ngIf="theaters">
+                        <div class="col-md-6 mt-2" *ngFor="let theater of theaters">
+                            <div class="card ">
+                                <div class="card-header">{{theater.name}}</div>
+                                <div class="card-body" *ngIf="theater.projections">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <img class="card-img-top"
+                                                alt="{{ (theater.projections>0 ? theater.prrojections[0].film.name : '')}}"
+                                                style="  max-height: 300px; max-width: 250px;"
+                                                src="{{ host + '/films/' + (theater.projections.length > 0 ? theater.projections[0].film.id : '') + '/image' }}" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <ul class="list-group">
+                                                <li class="list-group-item">Screenings:</li>
+                                                <li *ngFor="let p of theater.projections"
+                                                    class="list-group-item clickable" (click)="onGetTicketPlaces(p)"
+                                                    [ngClass]="currentProjection == p ? 'active' :''">
+                                                    {{p.screening.startingHour}} => Price : {{p.price | number
+                                                    :'0.00'}}$
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2" *ngIf="currentProjection">
+                                        <div *ngIf="currentProjection.theater.id==theater.id">
+                                            <div *ngIf="currentProjection.tickets">
+                                                <button *ngFor="let ticket of currentProjection.tickets"
+                                                    class="{{getTicketClass(ticket)}}" [disabled]="ticket.reserved"
+                                                    (click)="onSelectTicket(ticket)" class="m-1">
+                                                    {{ticket.seat.number}}
+                                                </button>
+                                            </div>
+                                            <div *ngIf="selectedTickets.length>0">
+                                                <form #f="ngForm" (ngSubmit)="onPayTickets(f.value)">
+                                                    <div class="mb-3">
+                                                        <label for="clientName" class="form-label">Client Name:</label>
+                                                        <input type="email" class="form-control" id="clientName"
+                                                            name="clientName" ngModel>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="paymentCode" class="form-label">Payment
+                                                            Code:</label>
+                                                        <input type="text" class="form-control" id="paymentCode"
+                                                            name="paymentCode" ngModel>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                                </form>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
